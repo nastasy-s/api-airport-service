@@ -66,7 +66,7 @@ class FlightSerializer(serializers.ModelSerializer):
         source="crew",
         queryset=Crew.objects.all(),
         write_only=True,
-
+        required=False
     )
 
     class Meta:
