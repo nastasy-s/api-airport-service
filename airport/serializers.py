@@ -125,6 +125,25 @@ class TicketSerializer(serializers.ModelSerializer):
         model = Ticket
         fields = ("id", "flight", "row", "seat")
 
+    def validate(self, attrs):
+        flight = attrs["flight"]
+        row = attrs["row"]
+        seat = attrs["seat"]
+
+        airplane = flight.airplane
+
+        if row > airplane.rows:
+            raise serializers.ValidationError(
+                {"row": "Row number exceeds airplane capacity"}
+            )
+
+        if seat > airplane.seats_in_row:
+            raise serializers.ValidationError(
+                {"seat": "Seat number exceeds seats per row"}
+            )
+
+        return attrs
+
 
 class TicketCreateSerializer(serializers.ModelSerializer):
     flight_id = serializers.PrimaryKeyRelatedField(

@@ -22,6 +22,8 @@ from airport.serializers import (
     OrderSerializer,
     RouteSerializer,
 )
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 
 class AirportViewSet(viewsets.ModelViewSet):
@@ -89,9 +91,34 @@ class FlightViewSet(viewsets.ModelViewSet):
     serializer_class = FlightSerializer
 
     def get_permissions(self):
-        if self.action in ("list", "retrieve"):
+        if self.action in ("list", "retrieve","available_seats"):
             return []
         return [IsAdminUser()]
+
+    @action(detail=True, methods=["get"], url_path="available-seats")
+    def available_seats(self, request, pk=None):
+        flight = self.get_object()
+        airplane = flight.airplane
+
+        taken = set(
+            flight.ticket_set.values_list("row", "seat")
+        )
+
+        available = []
+        for row in range(1, airplane.rows + 1):
+            for seat in range(1, airplane.seats_in_row + 1):
+                if (row, seat) not in taken:
+                    available.append({"row": row, "seat": seat})
+
+        total = airplane.rows * airplane.seats_in_row
+
+        return Response({
+            "flight_id": flight.id,
+            "total_seats": total,
+            "taken_seats": len(taken),
+            "available_seats": len(available),
+            "results": available,
+        })
 
 
 class OrderViewSet(viewsets.ModelViewSet):
