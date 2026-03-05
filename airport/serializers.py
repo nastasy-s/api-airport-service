@@ -155,6 +155,30 @@ class TicketCreateSerializer(serializers.ModelSerializer):
         model = Ticket
         fields = ("flight_id", "row", "seat")
 
+    def validate(self, attrs):
+        flight = attrs["flight"]
+        row = attrs["row"]
+        seat = attrs["seat"]
+
+        airplane = flight.airplane
+
+        if row < 1:
+            raise serializers.ValidationError({"row": "Row must be >= 1"})
+        if seat < 1:
+            raise serializers.ValidationError({"seat": "Seat must be >= 1"})
+
+        if row > airplane.rows:
+            raise serializers.ValidationError(
+                {"row": f"Row must be between 1 and {airplane.rows} for this airplane"}
+            )
+
+        if seat > airplane.seats_in_row:
+            raise serializers.ValidationError(
+                {"seat": f"Seat must be between 1 and {airplane.seats_in_row} for this airplane"}
+            )
+
+        return attrs
+
 
 class OrderSerializer(serializers.ModelSerializer):
     tickets = TicketSerializer(many=True, read_only=True)
