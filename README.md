@@ -173,5 +173,11 @@ This project demonstrates:
 * Role-based permission control
 * API documentation using OpenAPI
 
+## API Documentation
+![Swagger](screenshots/swagger.png)
+
+## Database Structure
+![Database Diagram](screenshots/db-diagram.png)
+
 Author
 Anastasiia Savchenko
