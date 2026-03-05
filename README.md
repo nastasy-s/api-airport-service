@@ -42,15 +42,18 @@ This project demonstrates relational data modeling, nested serialization, custom
 * Unique seat constraint per flight (flight + row + seat)
 * Atomic transaction handling during ticket creation
 
+### Custom Feature
+Available Seats Endpoint
+`GET /api/flights/{id}/available-seats/`
+Returns available seats for a specific flight based on airplane capacity and already booked tickets.
+
 ### Authentication
 The API uses JWT authentication.
-
 Obtain Token
-
 Endpoint:
 `POST /api/user/token/`
 
-Request body:
+Request:
 
 `{
   "username": "your_username",
@@ -90,13 +93,17 @@ Create a `.env` file in the project root:
 `DJANGO_SECRET_KEY=your_secret_key
 DJANGO_DEBUG=True
 DJANGO_ALLOWED_HOSTS=127.0.0.1,localhost`
+
 Apply migrations
 `python manage.py migrate`
+
 Create superuser
 `python manage.py createsuperuser`
+
 Run development server
 `python manage.py runserver`
-API Documentation
+
+#### API Documentation
 
 Swagger UI:
 http://127.0.0.1:8000/api/docs/
@@ -104,21 +111,52 @@ http://127.0.0.1:8000/api/docs/
 OpenAPI schema:
 http://127.0.0.1:8000/api/schema/
 
+Browsable API
+Screenshots of key endpoints:
+[/api/airports/
+/api/flights/
+/api/orders/
+/api/docs/]()
+
 ### Database Structure Overview
 Main entities:
 * Airport
-* Route (ForeignKey: source, destination)
+* Route
 * AirplaneType
-* Airplane (ForeignKey: airplane_type)
+* Airplane
 * Crew
-* Flight (ForeignKey: route, airplane; ManyToMany: crew)
-* Order (ForeignKey: user)
-* Ticket (ForeignKey: flight, order)
+* Flight
+* Order
+* Ticket
 
-Constraints:
+Relationships:
+* Route → Airport (source, destination)
+* Flight → Route
+* Flight → Airplane
+* Flight → Crew (ManyToMany)
+* Order → User
+* Ticket → Flight
+* Ticket → Order
+
+### Constraints:
 * Unique seat per flight (flight, row, seat)
 * Atomic order creation
 * Related object optimization using select_related and prefetch_related
+
+
+### Run with Docker
+Build containers
+`docker-compose build`
+
+Run containers
+`docker-compose up`
+
+Apply migrations
+`docker-compose exec app python manage.py migrate`
+
+Create superuser
+`docker-compose exec app python manage.py createsuperuser`
+
 
 ### Development Workflow
 * Development branch: develop
