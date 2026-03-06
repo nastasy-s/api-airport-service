@@ -91,7 +91,7 @@ class FlightViewSet(viewsets.ModelViewSet):
     serializer_class = FlightSerializer
 
     def get_permissions(self):
-        if self.action in ("list", "retrieve","available_seats"):
+        if self.action in ("list", "retrieve", "available_seats"):
             return []
         return [IsAdminUser()]
 

@@ -174,7 +174,7 @@ class TicketCreateSerializer(serializers.ModelSerializer):
 
         if seat > airplane.seats_in_row:
             raise serializers.ValidationError(
-                {"seat": f"Seat must be between 1 and {airplane.seats_in_row} for this airplane"}
+                {"seat": f"Seat must be between 1 and {airplane.seats_in_row} for this airplane"} # noqa501
             )
 
         return attrs
